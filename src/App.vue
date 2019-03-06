@@ -1,17 +1,17 @@
 <template>
-  <main class="main">
-    <aside>
+  <div class="layout">
+    <nav class="layout__side">
       <Sidebar />
-    </aside>
+    </nav>
 
-    <section>
+    <main class="layout__main">
       <transition name="main" :duration="{ leave: 800 }">
         <router-view/>
       </transition>
-    </section>
+    </main>
 
     <Player />
-  </main>
+  </div>
 </template>
 
 <script>
@@ -29,20 +29,23 @@ export default {
   data() {
     return {
       tilePosition: {},
+      size: {},
       artistId: null,
     }
   },
 
   created() {
-    this.$root.$on('gotoTracks', (position, artistId) => {
+    this.$root.$on('gotoTracks', (position, size, artistId) => {
       this.tilePosition = position
+      this.size = size
       this.artistId = artistId
 
       this.$router.push({
-        name: 'tracks',
+        name: 'artist',
         params: {
           id: artistId,
-          position: position
+          position,
+          size
         }
       })
     })
@@ -52,7 +55,8 @@ export default {
         name: 'artists',
         params: {
           id: this.artistId,
-          position: this.tilePosition
+          position: this.tilePosition,
+          size: this.size
         }
       })
     })
@@ -61,30 +65,29 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.main {
-  display: flex;
+.layout {
+  padding-bottom: 60px;
 }
 
-aside {
-  position: fixed;
-  z-index: 1;
-  width: 260px;
-  flex-shrink: 0;
-  height: 100vh;
-  border-right: 1px solid #353642;
-  background-color: #191a28;
-  overflow-y: auto;
+  .layout__side {
+    position: fixed;
+    z-index: 1;
+    overflow-y: auto;
+    width: var(--side-width);
+    height: 100vh;
+    border-right: 1px solid #353642;
+    background-color: #191a28;
 
-  @media screen and (max-width: 768px) {
-    left: -260px;
+    @media screen and (max-width: 768px) {
+      left: calc(-1 * var(--side-width));
+    }
   }
-}
 
-section {
-  flex-grow: 1;
+  .layout__main {
+    flex-grow: 1;
 
-  @media screen and (min-width: 769px) {
-    padding-left: 260px;
+    @media screen and (min-width: 769px) {
+      padding-left: var(--side-width);
+    }
   }
-}
 </style>

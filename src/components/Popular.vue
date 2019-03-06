@@ -15,6 +15,8 @@
 </template>
 
 <script>
+import { formatTime } from '@/utils/formatTime';
+
 export default {
   props: {
     tracks: Array
@@ -25,11 +27,7 @@ export default {
       return require(`../assets/tracks/recent/${name}`)
     },
 
-    formatTime(totalSeconds) {
-      const min = Math.floor(totalSeconds / 60)
-      const sec = totalSeconds - (min * 60)
-      return `${min}:${sec}`
-    }
+    formatTime
   }
 }
 </script>

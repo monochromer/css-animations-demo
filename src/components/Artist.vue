@@ -44,7 +44,17 @@ export default {
     artist: function() {
       return artists.find(a => this.artistId === a.id)
     }
-  }
+  },
+
+  beforeRouteEnter(to, from, next) {
+    next();
+  },
+
+  beforeRouteLeave(to, from, next) {
+    // eslint-disable-next-line
+    console.log(from);
+    next()
+  },
 }
 </script>
 
@@ -55,7 +65,7 @@ export default {
 
 .container {
   @media screen and (min-width: 769px) {
-    width: calc(100vw - 260px);
+    // width: calc(100vw - 260px);
   }
 
   &.main-leave-active {

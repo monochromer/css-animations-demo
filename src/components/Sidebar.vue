@@ -64,8 +64,7 @@
 
 <style lang="scss" scoped>
 .sidebar {
-  padding-top: 52px;
-  padding-left: 50px;
+  padding: 52px 0 60px 50px;
   color: rgba(255, 255, 255, 0.5);
 }
 

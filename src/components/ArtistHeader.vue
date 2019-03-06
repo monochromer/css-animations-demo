@@ -1,14 +1,15 @@
 <template>
   <div class="header">
     <!-- Back button -->
-    <span class="back-button" @click="$root.$emit('gotoArtists')">
+    <!-- <span class="back-button" @click="$root.$emit('gotoArtists')"> -->
+    <span class="back-button" @click="goBack">
       <svg width="14" height="14" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
         <path fill="#FFF" d="M24 10.5H5.7l8.4-8.4L12 0 0 12l12 12 2.1-2.1-8.4-8.4H24z"/>
       </svg>
     </span>
 
     <!-- Artist image -->
-    <div class="image-wrapper">
+    <div :class="imageClass" ref="image-wrapper">
       <img class="image" :src="require(`../assets/${artist.image}`)" width="240" height="240">
     </div>
 
@@ -40,18 +41,41 @@ export default {
     artist: Object
   },
 
-  beforeMount() {
-    const rootEl = document.documentElement
-    const { left, top } = this.$route.params.position
-    // sidebar width + left padding = 360
-    const offsetLeft = window.innerWidth > 768 ? 360 : 100
-    // padding from top
-    const offsetTop = 30
-    const x = left - offsetLeft
-    const y = top - offsetTop
+  data() {
+    return {
+      isMounted: false
+    }
+  },
 
-    scroll(0, 0)
-    rootEl.style.setProperty('--translate-header-image', `translate(${x}px, ${y}px) scale(0.792)`)
+  computed: {
+    imageClass() {
+      return {
+        'image-wrapper': true,
+        'animate': this.isMounted
+      }
+    }
+  },
+
+  beforeMount() {
+  },
+
+  mounted() {
+    const imageWrapper = this.$refs['image-wrapper'];
+    const { x, y, width, height } = imageWrapper.getBoundingClientRect();
+    const rootEl = document.documentElement;
+    rootEl.style.setProperty('--header-tile-width', width);
+    rootEl.style.setProperty('--header-tile-height', height);
+    rootEl.style.setProperty('--header-tile-x', x);
+    rootEl.style.setProperty('--header-tile-y', y);
+    requestAnimationFrame(() => {
+      this.isMounted = true;
+    })
+  },
+
+  methods: {
+    goBack() {
+      this.$router.back();
+    }
   }
 }
 </script>
@@ -115,9 +139,9 @@ export default {
   position: relative;
   flex-shrink: 0;
   margin-right: 30px;
-  transform-origin: left top;
+  transform-origin: 0 0;
   will-change: transform;
-  animation: move-image 0.9s var(--easing-smooth);
+  // animation: move-image 0.9s var(--easing-smooth);
 
   &::after {
     content: '';
@@ -129,11 +153,24 @@ export default {
     background: linear-gradient(to bottom, transparent, #191a28);
     animation: fade-in 0.5s ease forwards;
   }
+
+  &.animate {
+     animation: move-image 0.9s var(--easing-smooth);
+  }
 }
 
 @keyframes move-image {
   from {
-    transform: var(--translate-header-image);
+    // transform: var(--translate-header-image);
+    transform:
+      translate(
+        calc((var(--tile-x) - var(--header-tile-x)) * 1px),
+        calc((var(--tile-y) - var(--header-tile-y)) * 1px)
+      )
+      scale(
+        calc(var(--tile-width) / var(--header-tile-width)),
+        calc(var(--tile-height) / var(--header-tile-height))
+      );
   }
 }
 
@@ -143,9 +180,9 @@ export default {
 }
 
 .image {
-  border-radius: 10px;
+  display: block;
   object-fit: cover;
-  vertical-align: bottom;
+  border-radius: 10px;
 }
 
 .actions {

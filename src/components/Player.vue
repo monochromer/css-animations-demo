@@ -58,6 +58,9 @@
 </template>
 
 <script>
+import A from '@/utils/animate';
+import { lerpArrays } from '@/utils/lerp';
+
 export default {
   data() {
     return {
@@ -65,55 +68,42 @@ export default {
       volumeLevel: 2,
       isPlaying: false,
       buttonShape: {
-        play1: [0, 0, 0, 40, 18.032, 29.982, 17.971, 9.984],
-        play2: [18.032, 29.982, 35.823, 20.099, 36, 20, 17.971, 9.984],
-        pause1: [0, 0, 0, 40, 11, 40, 11, 0],
-        pause2: [21, 40, 32, 40, 32, 0, 21, 0]
+        play1: [     0,      0,      0,     40, 18.032, 29.982, 17.971, 9.984],
+        play2: [18.032, 29.982, 35.823, 20.099,     36,     20, 17.971, 9.984],
+        pause1: [    0,      0,      0,     40,     11,     40,     11,     0],
+        pause2: [   21,     40,     32,     40,     32,      0,     21,     0]
       }
     }
   },
 
   methods: {
+    drawPlayButton(progress) {
+      const shapes = this.buttonShape;
+
+      const points1 = this.isPlaying
+        ? lerpArrays(shapes.play1, shapes.pause1, progress)
+        : lerpArrays(shapes.pause1, shapes.play1, progress)
+
+      const points2 = this.isPlaying
+        ? lerpArrays(shapes.play2, shapes.pause2, progress)
+        : lerpArrays(shapes.pause2, shapes.play2, progress)
+
+      this.$refs.shape1.setAttribute('points', points1.join(' '))
+      this.$refs.shape2.setAttribute('points', points2.join(' '))
+    },
+
     togglePlay() {
-      const shapes = this.buttonShape
+      A.animate({
+        duration: 100,
+        draw: this.drawPlayButton
+      })
 
-      const getProgress = ({elapsed, total}) =>
-        Math.min(elapsed / total, 1)
-
-      const time = {
-        start: performance.now(),
-        total: 150
-      }
-
-      const morph = now => {
-        time.elapsed = now - time.start
-
-        const getPoints = (from, to) => from.map((start, index) => {
-          const end = to[index]
-          const distance = end - start
-          const point = start + getProgress(time) * distance
-          return point
-        })
-
-        const points1 = this.isPlaying
-          ? getPoints(shapes.play1, shapes.pause1)
-          : getPoints(shapes.pause1, shapes.play1)
-        const points2 = this.isPlaying
-          ? getPoints(shapes.play2, shapes.pause2)
-          : getPoints(shapes.pause2, shapes.play2)
-
-        this.$refs.shape1.setAttribute('points', points1.join(' '))
-        this.$refs.shape2.setAttribute('points', points2.join(' '))
-
-        if (getProgress(time) < 1) requestAnimationFrame(morph)
-      }
-
-      requestAnimationFrame(morph)
       this.isPlaying = !this.isPlaying
     },
 
     changeVolume() {
-      this.volumeLevel = this.volumeLevel === 3 ? 0 : this.volumeLevel + 1
+      const levels = 4;
+      this.volumeLevel = (this.volumeLevel + 1 + levels) % levels;
     },
 
     toggleFavourite() {
@@ -132,7 +122,7 @@ export default {
   z-index: 1;
   display: grid;
   align-content: center;
-  grid-template-columns: 260px 120px 1fr 150px;
+  grid-template-columns: var(--side-width) 120px 1fr 150px;
   height: 60px;
   width: 100%;
   background-color: #3b3c4b;

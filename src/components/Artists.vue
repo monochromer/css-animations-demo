@@ -23,19 +23,26 @@ export default {
   },
 
   beforeMount() {
-    if (!this.$route.params.id) return
+  },
 
-    const rootEl = document.documentElement
-    const { top, left } = this.$route.params.position
-    // sidebar width + left padding = 360
-    const offsetLeft = window.innerWidth > 768 ? 360 : 100
-    // padding from top
-    const offsetTop = 30
-    const x = -(left - offsetLeft)
-    const y = -(top - offsetTop)
+  beforeRouteEnter(to, from, next) {
+    next()
+  },
 
-    rootEl.style.setProperty('--translate-tile', `translate(${x}px, ${y}px) scale(1.2632)`)
-  }
+  beforeRouteLeave(to, from, next) {
+    const { id } = to.params;
+    if (id) {
+      const tileElement = document.querySelector(`[data-id="${id}"]`);
+      const { x, y, width, height } = tileElement.getBoundingClientRect();
+      const rootEl = document.documentElement;
+      rootEl.style.setProperty('--tile-x', x);
+      rootEl.style.setProperty('--tile-y', y);
+      rootEl.style.setProperty('--tile-width', width);
+      rootEl.style.setProperty('--tile-height', height);
+      tileElement.style.opacity = 0;
+    }
+    next()
+  },
 }
 </script>
 

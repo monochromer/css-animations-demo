@@ -1,3 +1,3 @@
 module.exports = {
-  baseUrl: '/css-animations-demo/'
+  publicPath: '/'
 }
