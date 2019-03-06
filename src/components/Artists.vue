@@ -22,27 +22,12 @@ export default {
     }
   },
 
-  beforeMount() {
-  },
-
-  beforeRouteEnter(to, from, next) {
-    next()
-  },
-
-  beforeRouteLeave(to, from, next) {
+  beforeRouteLeave (to, from, next) {
     const { id } = to.params;
-    if (id) {
-      const tileElement = document.querySelector(`[data-id="${id}"]`);
-      const { x, y, width, height } = tileElement.getBoundingClientRect();
-      const rootEl = document.documentElement;
-      rootEl.style.setProperty('--tile-x', x);
-      rootEl.style.setProperty('--tile-y', y);
-      rootEl.style.setProperty('--tile-width', width);
-      rootEl.style.setProperty('--tile-height', height);
-      tileElement.style.opacity = 0;
-    }
-    next()
-  },
+    const image = this.$el.querySelector(`[data-flip-key="${id}"]`)
+    image.style.opacity = 0;
+    next();
+  }
 }
 </script>
 

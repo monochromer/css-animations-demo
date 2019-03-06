@@ -1,7 +1,6 @@
 <template>
   <div class="header">
     <!-- Back button -->
-    <!-- <span class="back-button" @click="$root.$emit('gotoArtists')"> -->
     <span class="back-button" @click="goBack">
       <svg width="14" height="14" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
         <path fill="#FFF" d="M24 10.5H5.7l8.4-8.4L12 0 0 12l12 12 2.1-2.1-8.4-8.4H24z"/>
@@ -9,8 +8,16 @@
     </span>
 
     <!-- Artist image -->
-    <div :class="imageClass" ref="image-wrapper">
-      <img class="image" :src="require(`../assets/${artist.image}`)" width="240" height="240">
+    <div
+      class="image-wrapper"
+      :data-flip-key="id"
+    >
+      <img
+        class="image"
+        :src="require(`../assets/${artist.image}`)"
+        width="240"
+        height="240"
+      />
     </div>
 
     <!-- Artist info -->
@@ -36,40 +43,17 @@
 </template>
 
 <script>
+import flipping from '@/utils/flip';
+
 export default {
   props: {
     artist: Object
   },
 
-  data() {
-    return {
-      isMounted: false
-    }
-  },
-
   computed: {
-    imageClass() {
-      return {
-        'image-wrapper': true,
-        'animate': this.isMounted
-      }
+    id() {
+      return this.$route.params.id
     }
-  },
-
-  beforeMount() {
-  },
-
-  mounted() {
-    const imageWrapper = this.$refs['image-wrapper'];
-    const { x, y, width, height } = imageWrapper.getBoundingClientRect();
-    const rootEl = document.documentElement;
-    rootEl.style.setProperty('--header-tile-width', width);
-    rootEl.style.setProperty('--header-tile-height', height);
-    rootEl.style.setProperty('--header-tile-x', x);
-    rootEl.style.setProperty('--header-tile-y', y);
-    requestAnimationFrame(() => {
-      this.isMounted = true;
-    })
   },
 
   methods: {

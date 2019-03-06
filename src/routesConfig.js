@@ -3,6 +3,12 @@ import Artist from './components/Artist.vue'
 
 export default {
   mode: 'history',
+  scrollBehavior() {
+    return {
+      x: 0,
+      y: 0
+    }
+  },
   routes: [
     {
       path: '/',

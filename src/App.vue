@@ -17,6 +17,7 @@
 <script>
 import Sidebar from './components/Sidebar.vue'
 import Player from './components/Player.vue'
+import flipping from '@/utils/flip';
 
 export default {
   name: 'app',
@@ -34,32 +35,30 @@ export default {
     }
   },
 
-  created() {
-    this.$root.$on('gotoTracks', (position, size, artistId) => {
-      this.tilePosition = position
-      this.size = size
-      this.artistId = artistId
-
-      this.$router.push({
-        name: 'artist',
-        params: {
-          id: artistId,
-          position,
-          size
-        }
+  methods: {
+    flipRead() {
+      this.$nextTick(function() {
+        flipping.read();
       })
-    })
+    },
 
-    this.$root.$on('gotoArtists', () => {
-      this.$router.push({
-        name: 'artists',
-        params: {
-          id: this.artistId,
-          position: this.tilePosition,
-          size: this.size
-        }
+    flipApply() {
+      this.$nextTick(function() {
+        flipping.flip();
       })
-    })
+    }
+  },
+
+  mounted() {
+    this.flipRead();
+  },
+
+  beforeUpdate() {
+    this.flipRead();
+  },
+
+  updated() {
+    this.flipApply();
   }
 }
 </script>

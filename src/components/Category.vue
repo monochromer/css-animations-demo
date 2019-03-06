@@ -6,10 +6,13 @@
         v-for="artist in artists"
         :key="artist.id"
       >
-        <div class="tile" :class="{'tile--slide-in': artist.id === $route.params.id}">
+        <div
+          class="tile"
+          :class="{'tile--slide-in': artist.id === $route.params.id}"
+        >
           <img
             class="image"
-            :data-id="artist.id"
+            :data-flip-key="artist.id"
             :src="createUrl(artist.image)"
             width="190"
             height="190"
