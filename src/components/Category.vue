@@ -6,16 +6,19 @@
         <div class="tile" :class="{'tile--slide-in': artist.id === $route.params.id}">
           <img
             class="image"
-            :data-id="artist.id"
+            :data-flip-key="artist.id"
             :src="createUrl(artist.image)"
             width="190"
             height="190"
-            @click="handleClick"
           >
           <span class="artist-info">
             <span class="artist-name">{{ artist.name }}</span>
             <span class="artist-category">{{ artist.category }}</span>
           </span>
+          <router-link
+            class="artist-link"
+            :to="{ name: 'tracks', params: { id : artist.id } }"
+          ></router-link>
         </div>
       </div>
     </div>
@@ -23,6 +26,8 @@
 </template>
 
 <script>
+import flipping from '@/utils/flip';
+
 export default {
   props: {
     title: String,
@@ -30,18 +35,6 @@ export default {
   },
 
   methods: {
-    handleClick(e) {
-      const el = e.target
-      const artistId = Number(el.dataset.id)
-      const { x, y } = el.getBoundingClientRect()
-      const position = { left: x, top: y }
-
-      // Transition to the artist page, sending the clicked image info
-      this.$root.$emit('gotoTracks', position, artistId)
-      // Hide the clicked image
-      el.style.opacity = 0
-    },
-
     createUrl(name) {
       return require(`../assets/${name}`)
     }
@@ -179,5 +172,13 @@ export default {
 
 .artist-category {
   font-size: 13px;
+}
+
+.artist-link {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
 }
 </style>

@@ -3,10 +3,13 @@ import Router from 'vue-router'
 import Artists from './components/Artists.vue'
 import Tracks from './components/Tracks.vue'
 
-Vue.use(Router)
+Vue.use(Router);
 
-export default new Router({
+const router = new Router({
   mode: 'history',
+  scrollBehavior () {
+    return { x: 0, y: 0 }
+  },
   routes: [
     {
       path: '/css-animations-demo/',
@@ -20,3 +23,5 @@ export default new Router({
     }
   ]
 })
+
+export default router

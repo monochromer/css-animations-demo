@@ -22,19 +22,11 @@ export default {
     }
   },
 
-  beforeMount() {
-    if (!this.$route.params.id) return
-
-    const rootEl = document.documentElement
-    const { top, left } = this.$route.params.position
-    // sidebar width + left padding = 360
-    const offsetLeft = window.innerWidth > 768 ? 360 : 100
-    // padding from top
-    const offsetTop = 30
-    const x = -(left - offsetLeft)
-    const y = -(top - offsetTop)
-
-    rootEl.style.setProperty('--translate-tile', `translate(${x}px, ${y}px) scale(1.2632)`)
+  beforeRouteLeave (to, from, next) {
+    const { id } = to.params;
+    const image = this.$el.querySelector(`[data-flip-key="${id}"]`)
+    image.style.opacity = 0;
+    next();
   }
 }
 </script>
